@@ -1,5 +1,5 @@
 import pygame
-
+import random
 
 pygame.init()
 
@@ -27,12 +27,19 @@ snake_color = (3, 240, 252)
 bg_color = (54, 2, 82)
 direction = 1
 update_snake = 0
+food = [0,0]
+food_color = ('red')
+new_food = True
+new_piece = [0,0]
+
+
+
 run = True
 
 while run:
 
     drawScreen()
-    
+    #movement
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -45,6 +52,33 @@ while run:
                 direction =  3
             if event.key == pygame.K_LEFT and direction !=2:
                 direction =  4
+    
+    #create food
+    if new_food == True:
+        new_food = False
+        food[0] = cell_size * random.randint(0, (SCREEN_WIDTH / cell_size) -1)
+        food[1] = cell_size * random.randint(0, (SCREEN_HEIGHT / cell_size) -1)
+
+
+    #draw the food
+    pygame.draw.rect(SCREEN, food_color, (food[0], food[1], cell_size,cell_size))
+
+    #food eating:
+    if snake_pos[0] == food:
+        new_food = True
+        new_piece = list(snake_pos[-1])
+        if direction == 1:
+            new_piece[1] += cell_size
+        if direction == 3:
+            new_piece[1] -= cell_size
+        if direction == 2:
+            new_piece[0] -= cell_size
+        if direction == 4:
+            new_piece[0] += cell_size
+
+        snake_pos.append(new_piece)
+
+
 
     if update_snake > 99:
         update_snake =0
@@ -76,8 +110,6 @@ while run:
             head = 0
 
 
-
-    #snake movements
 
     pygame.display.update()
     update_snake += 1
